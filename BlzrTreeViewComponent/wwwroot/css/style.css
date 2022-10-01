@@ -40,7 +40,7 @@ span::before {
 }
 
 .parentUl li ul {
-    border-left: dashed 2px red;
+    border-left: groove 1px red;
     height: fit-content;
     border-start-end-radius: 2px;
 }
@@ -60,7 +60,7 @@ ul, .parentUl {
             left: -40px;
             width: 40px;
             height: 1px;
-            border-bottom: dashed 2px red;
+            border-bottom: groove 1px red;
         }
 
 .parentUl {

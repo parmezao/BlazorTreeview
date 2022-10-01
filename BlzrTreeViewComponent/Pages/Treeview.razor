@@ -46,7 +46,11 @@
                                                                             }
                                                                             else
                                                                             {
-                                                                                <li><a class="pointer-link" href="www.google.com"> @GetPropertyValue(C2item, Text)</a><span class="fas fa-check"></span> </li>
+                                                                                <li>
+                                                                                    <ContextMenuTrigger MenuId="triggerMenu" MouseButtonTrigger="MouseButtonTrigger.Left">
+                                                                                        <a class="pointer-link" href="www.google.com"> @GetPropertyValue(C2item, Text)</a><span class="fas fa-check-double"></span> 
+                                                                                    </ContextMenuTrigger>                                                                                    
+                                                                                </li>
                                                                             }
                                                                         }
                                                                     }
@@ -79,3 +83,18 @@
         }
     }
 </ul>
+
+<ContextMenu Id="triggerMenu" CssClass="z-10" Animation="Animation.Grow">
+    <Item OnClick="@OnClick">Item 1<span class="fas fa-minus-circle"></span></Item>
+    <Item OnClick="@OnClick">Item 2<span class="fas fa-check"></span></Item>
+    <Item OnClick="@OnClick">Item 3<span class="fas fa-check-double"></span></Item>
+</ContextMenu>
+
+
+@*@functions{
+    void OnClick(ItemClickEventArgs e)
+    {
+        Console.WriteLine($"Item Clicked => Menu: {e.ContextMenuId}, MenuTarget: {e.ContextMenuTargetId}, " +
+            $"IsCanceled: {e.IsCanceled}, MenuItem: {e.MenuItemElement}, MouseEvent: {e.MouseEvent}");
+    }
+}*@

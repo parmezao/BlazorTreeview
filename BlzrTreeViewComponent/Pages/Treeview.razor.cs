@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorContextMenu;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,13 @@ namespace BlzrTreeViewComponent.Pages
             return null;
         }
         #endregion
+
+
+        public void OnClick(ItemClickEventArgs e)
+        {
+            Console.WriteLine($"Item Clicked => Menu: {e.ContextMenuId}, MenuTarget: {e.ContextMenuTargetId}, " +
+                $"IsCanceled: {e.IsCanceled}, MenuItem: {e.MenuItemElement}, MouseEvent: {e.MouseEvent}");
+        }
     }
 
 }

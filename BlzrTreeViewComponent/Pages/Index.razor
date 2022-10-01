@@ -1,0 +1,29 @@
+﻿@page "/"
+
+<Treeview Tvalue="MailItem" DataSource="@MyFolder" Id="Id" Text="FolderName" ParentId="ParentId"
+      Expanded="Expanded" HasChildren="HasSubFolder"></Treeview>
+
+@code{
+    protected class MailItem
+    {
+        public int Id { get; set; }
+        public string ParentId { get; set; }
+        public bool HasSubFolder { get; set; }
+        public string FolderName { get; set; }
+        public bool Expanded { get; set; }
+    }
+
+    List<MailItem> MyFolder = new List<MailItem>();
+
+    protected override Task OnInitializedAsync()
+    {
+        MyFolder.Add(new MailItem { Id = 1, FolderName = "Inbox", HasSubFolder = true, Expanded = true, ParentId = "" });
+        MyFolder.Add(new MailItem { Id = 2, FolderName = "Category", ParentId = "1", HasSubFolder = true, Expanded = true });
+        MyFolder.Add(new MailItem { Id = 3, FolderName = "Primary", ParentId = "2", HasSubFolder = false, Expanded = true });
+        MyFolder.Add(new MailItem { Id = 4, FolderName = "Social", ParentId = "6", HasSubFolder = false, Expanded = true });
+        MyFolder.Add(new MailItem { Id = 5, FolderName = "Promotion", ParentId = "6", HasSubFolder = false, Expanded = true });
+        MyFolder.Add(new MailItem { Id = 6, FolderName = "Demo", ParentId = "2", HasSubFolder = true, Expanded = true });
+
+        return base.OnInitializedAsync();
+    }
+}

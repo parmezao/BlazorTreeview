@@ -91,7 +91,6 @@ namespace BlzrTreeViewComponent.Pages
         #region reflection methodes to get your property type, propert value and also set property value 
         protected string GetPropertyValue(Tvalue item, string Property)
         {
-
             if (item != null)
             {
                 return item.GetType().GetProperty(Property).GetValue(item, null).ToString();
@@ -110,7 +109,6 @@ namespace BlzrTreeViewComponent.Pages
 
         protected string GetPropertyType(Tvalue item, string Property)
         {
-
             if (item != null)
             {
                 return item.GetType().GetProperty(Property).PropertyType.Name;

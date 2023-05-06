@@ -32,35 +32,113 @@
     {
         public int Id { get; set; }
         public string Descricao { get; set; }
-        public List<Perfil> Perfil { get; set; }
     }
 
     protected class Perfil
     {
         public int Id { get; set; }
-        public int SistemaId { get; set; }
+        public int ParentId { get; set; }
         public string Descricao { get; set; }
     }
 
     protected class Modulo
     {
         public int Id { get; set; }
+        public int ParentId { get; set; }
         public string Descricao { get; set; }
     }
 
-    //private void GenerateFuncPerfil(List<Sistema> Sistemas)
-    //{
-    //    var funcionalidade = new List<Funcionalidade>();
+    private List<Perfil> GetPerfil(string sistema)
+    {
+        var result = new List<Perfil>();
 
-    //    var result = Sistemas.Select(s =>
-    //    {
-    //        funcionalidade.Add(new Funcionalidade
-    //        {
-    //            Id = s.Id,
-    //            ParentId = ""
-    //        });
-    //    });
-    //}
+        if (sistema == "JDACE")
+        {
+            result = Perfis.Where(p => p.Id == 1).ToList();
+        }
+        else
+        {
+            result = Perfis.Where(p => p.Id > 1).ToList();
+        }
+
+        return result;
+    }
+
+    private List<Modulo> GetModulo(string sistema)
+    {
+        var result = new List<Modulo>();
+
+        if (sistema == "JDACE")
+        {
+            result = Modulos.Where(p => p.Id == 1).ToList();
+        }
+        else
+        {
+            result = Modulos.Where(p => p.Id > 1).ToList();
+        }
+
+        return result;
+    }
+
+    private void MontaTreeView()
+    {
+        int idFunc = 0;
+        int idFuncPaiPerfil = 0;
+        int idFuncPaiModulo = 0;
+
+        #region Carrega SISTEMAS...
+        var sistemas = Sistemas;
+
+        foreach (var sistema in sistemas)
+        {
+            idFunc += 1;
+            Funcionalidades.Add(new Funcionalidade
+            {
+                Id = idFunc,
+                ParentId = string.Empty,
+                HasSubItem = true,
+                ItemName = sistema.Descricao,
+                Expanded = true
+            });
+
+            #region Carrega PERFIS...
+            var perfis = GetPerfil(sistema.Descricao);
+
+            idFuncPaiPerfil = idFunc;
+            foreach (var perfil in perfis)
+            {
+                idFunc += 1;
+                Funcionalidades.Add(new Funcionalidade
+                {
+                    Id = idFunc,
+                    ParentId = idFuncPaiPerfil.ToString(),
+                    HasSubItem = true,
+                    ItemName = perfil.Descricao,
+                    Expanded = true
+                }); 
+
+                #region Carrega MODULOS...
+                var modulos = GetModulo(sistema.Descricao);
+
+                idFuncPaiModulo = idFunc;
+                foreach (var modulo in modulos)
+                {
+                    idFunc += 1;
+                    Funcionalidades.Add(new Funcionalidade
+                        {
+                            Id = idFunc,
+                            ParentId = idFuncPaiModulo.ToString(),
+                            HasSubItem = true,
+                            ItemName = modulo.Descricao,
+                            Expanded = true
+                        });
+                }
+                #endregion
+            }
+            #endregion
+        }
+        #endregion
+    }
 
     List<Sistema> Sistemas = new List<Sistema>();
     List<Perfil> Perfis = new List<Perfil>();
@@ -69,70 +147,18 @@
 
     protected override Task OnInitializedAsync()
     {
-        Sistemas.Add(new Sistema
-        {
-            Id = 1,
-            Descricao = "JDACE",
-            Perfil = new List<Perfil>
-            {
-                new Perfil { Id = 1, SistemaId = 1, Descricao = "Perfil - Administrador" }
-            }
-        });
+        Sistemas.Add(new Sistema { Id = 1, Descricao = "JDACE" });
+        Sistemas.Add(new Sistema { Id = 2, Descricao = "JDCTC" });
 
-        Sistemas.Add(new Sistema
-        {
-            Id = 2,
-            Descricao = "JDCTC",
-            Perfil = new List<Perfil>
-            {
-                new Perfil { Id = 2, SistemaId = 2, Descricao = "Perfil - Operacional" },
-                new Perfil { Id = 3, SistemaId = 2, Descricao = "Perfil - Master" }
-            }
-        });
+        Perfis.Add(new Perfil { Id = 1, Descricao = "Perfil - Administrador" });
+        Perfis.Add(new Perfil { Id = 2, Descricao = "Perfil - Operacional" });
+        Perfis.Add(new Perfil { Id = 3, Descricao = "Perfil - Master" });
 
-        //GenerateFuncPerfil(Sistemas);
+        Modulos.Add(new Modulo { Id = 1, Descricao = "JDACE - Acesso" });
+        Modulos.Add(new Modulo { Id = 2, Descricao = "JDCTC - Web" });
+        Modulos.Add(new Modulo { Id = 3, Descricao = "JDCTC - Web Service" });
 
-
-        //Sistemas.Add(new Sistema { Id = 2, Descricao = "JDCTC", Perfil = per });
-
-        //Perfis.Add(new Perfil { Id = 1, SistemaId = 1, Descricao = "Perfil - Administrador" });
-        //Perfis.Add(new Perfil { Id = 2, SistemaId = 2, Descricao = "Perfil - Operacional" });
-        //Perfis.Add(new Perfil { Id = 3, SistemaId = 2, Descricao = "Perfil - Master" });
-
-
-        //Modulos.Add(new Modulo { Id = 1, Descricao = "JDACE - Acesso" });
-        //Modulos.Add(new Modulo { Id = 2, Descricao = "JDCTC - Web" });
-        //Modulos.Add(new Modulo { Id = 3, Descricao = "JDCTC - Web Service" });
-
-
-        Funcionalidades.Add(new Funcionalidade { Id = 1, ItemId = "JDACE", ParentId = "", HasSubItem = true, ItemName = "JD ACE - Controle de Acesso", Expanded = true });
-        Funcionalidades.Add(new Funcionalidade { Id = 3, ItemId = "JDCTC", ParentId = "", HasSubItem = true, ItemName = "JD CTC - Central Trf. Crédito", Expanded = true });
-        Funcionalidades.Add(new Funcionalidade { Id = 2, ParentId = "1", HasSubItem = true, ItemName = "Perfil - Administrador", Expanded = true });
-        Funcionalidades.Add(new Funcionalidade { Id = 4, ParentId = "3", HasSubItem = true, ItemName = "Perfil - Administrador", Expanded = true });
-        Funcionalidades.Add(new Funcionalidade { Id = 5, ParentId = "3", HasSubItem = true, ItemName = "Perfil - Operacional", Expanded = true });
-        Funcionalidades.Add(new Funcionalidade { Id = 6, ParentId = "3", HasSubItem = true, ItemName = "Perfil - Master", Expanded = true });
-
-        //Funcionalidades.Add(new Funcionalidade { Id = 7, ParentId = "2", HasSubItem = false, ItemName = "JDACE - Acesso", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 8, ParentId = "4", HasSubItem = false, ItemName = "JDACE - Acesso", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 9, ParentId = "6", HasSubItem = false, ItemName = "JDCTC - Web", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 10, ParentId = "6", HasSubItem = false, ItemName = "JDCTC - Web Service", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 11, ParentId = "5", HasSubItem = true, ItemName = "JDCTC - Web", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 12, ParentId = "5", HasSubItem = false, ItemName = "JDCTC - Web Service", Expanded = true });
-
-        //Funcionalidades.Add(new Funcionalidade { Id = 13, ParentId = "11", HasSubItem = false, ItemName = "Cadastro", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 14, ParentId = "11", HasSubItem = false, ItemName = "Configuração", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 15, ParentId = "11", HasSubItem = false, ItemName = "Contingência", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 16, ParentId = "11", HasSubItem = false, ItemName = "LGPD", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 17, ParentId = "11", HasSubItem = false, ItemName = "Logs", Expanded = true });
-        //Funcionalidades.Add(new Funcionalidade { Id = 18, ParentId = "11", HasSubItem = false, ItemName = "Relatórios", Expanded = true });
-
-
-        //MyFolder.Add(new MailItem { Id = 1, FolderName = "Inbox", HasSubFolder = true, Expanded = true, ParentId = "" });
-        //MyFolder.Add(new MailItem { Id = 2, FolderName = "Category", ParentId = "1", HasSubFolder = true, Expanded = true });
-        //MyFolder.Add(new MailItem { Id = 3, FolderName = "Primary", ParentId = "2", HasSubFolder = false, Expanded = true });
-        //MyFolder.Add(new MailItem { Id = 4, FolderName = "Social", ParentId = "6", HasSubFolder = false, Expanded = true });
-        //MyFolder.Add(new MailItem { Id = 5, FolderName = "Promotion", ParentId = "6", HasSubFolder = false, Expanded = true });
-        //MyFolder.Add(new MailItem { Id = 6, FolderName = "Demo", ParentId = "2", HasSubFolder = true, Expanded = true });
+        MontaTreeView();
 
         return base.OnInitializedAsync();
     }
